@@ -13,10 +13,12 @@
 - I did some changes as I like so please do not expect this be the same way as it is done in the course
 - When we just say `pip` or `python` it means that we wanna use python version 3
 
-# Install Django
+# CLI
 
 - `pip install -r requirements.txt` to install dependencies
+- `django-admin` is a command-line utility for administrative tasks.
 - A bunch of command related to `manage.py`
+  - Interact with this Django project
   - Automatically created.
   - `python manage.py <command> [options]`
     - Available commands:
@@ -45,8 +47,29 @@
         - sqlmigrate
         - sqlsequencereset
         - squashmigrations
-        - `startapp` to create a new app (or module) with some boilerplate
-        - startproject
+        - `startapp`
+          - `python manage.py startapp polls`
+          - A utility that automatically generates the basic directory structure of an app
+          - Projects vs. apps:
+            - App is a web application that does something.
+            - A project is a collection of configuration and apps for a particular website.
+        - `startproject` to create a new project
+          - `django-admin startproject go_back_start_again`
+          - Avoid naming projects after built-in Python or Django components.
+          - What `startproject` created:
+            - `manage.py`
+            - `go_back_start_again/`:
+              - root directory
+            - `go_back_start_again/__init__.py`
+              - Tells python to consider this directory as a Python package.
+            - `go_back_start_again/settings.py`
+              - Configuration for this Django project.
+            - `go_back_start_again/urls.py`
+              - URL declarations for this Django project
+            - `go_back_start_again/asgi.py`
+              - An entry-point for ASGI-compatible web servers to serve your project.
+            - `go_back_start_again/wsgi.py`
+              - An entry-point for WSGI-compatible web servers to serve your project.
         - test
         - testserver
       - **rest_framework**
@@ -56,22 +79,38 @@
       - **staticfiles**
         - collectstatic
         - findstatic
-        - `runserver`: to start your app
+        - `runserver`:
+          - To start your app
+          - Reload server automatically after you change something in codebase
+            - Some actions do not cause restarting server, You have to stop and start it manually
+              - One of them is adding new file
+          - **Do not** use this server in anything resembling a production environment.
+          - This command is tends to be only for dev env
+          - Starts development server on the port 8000.
+            - `python manage.py runserver 8080`
+          - Starts the development server on the **internal network**
+            - `python manage.py runserver 0:8000`
+              - `0` is shorthand for `0.0.0.0`
     - Available options:
       - `--verbosity` To log more in terminal
       - `--deploy` to do some extra check in deploy mode
       - ``
 
+# Steps I take in a glance
+
 1. `mkdir d4e`
+   - Put your code in some directory outside of the document root, such as `/home/mycode`.
 2. `cd d3e`
 3. `virtualenv venv`
 4. `source venv/bin/activate`
 5. `pip install django`
-
-- Now you can create a new project:
-  - `django-admin startproject go_back_start_again`
-    - `django-admin` is a command-line utility for administrative tasks.
+6. `django-admin startproject go_back_start_again`
+7. `python manage.py startapp polls`
 
 # `settings.py`
 
 - `ALLOWED_HOSTS` tells Django to make our app available for which host/domain name. It is basically an array of strings
+
+# Views
+
+-
