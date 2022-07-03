@@ -120,12 +120,88 @@
 - `views.py` are view and controller
 - `models.py` are models
 
-# `settings.py`
+# [`settings.py`](https://docs.djangoproject.com/en/4.0/ref/settings)
 
 - `ALLOWED_HOSTS` tells Django to make our app available for which host/domain name. It is basically an array of strings
+- Static files:
+  - `STATIC_ROOT`
+    - The absolute path to the directory where collectstatic will collect static files for deployment.
+  - `STATIC_URL`
+    - Example: "static/" or "http://static.example.com/"
+  - `STATICFILES_DIRS`
+    - Define additional locations for the `staticfiles`
+  - `STATICFILES_STORAGE`
+    - [Serving static files from a cloud service or CDN](https://docs.djangoproject.com/en/4.0/howto/static-files/deployment/#staticfiles-from-cdn).
+- Logs
+  - `MESSAGE_LEVEL`
+    ```py
+    from django.contrib.messages import constants as message_constants
+    MESSAGE_LEVEL = message_constants.DEBUG
+    ```
+  - `MESSAGE_STORAGE`
+    - `'django.contrib.messages.storage.fallback.FallbackStorage'`
+    - `'django.contrib.messages.storage.session.SessionStorage'`
+    - `'django.contrib.messages.storage.cookie.CookieStorage'`
+- `DATA_UPLOAD_MAX_MEMORY_SIZE`
+  - maximum size in bytes that a request body may be before a SuspiciousOperation (RequestDataTooBig) is raised.
+  - Exclude any file upload data
+  - Set to `None` to disable this check
+- File upload:
+  - `FILE_UPLOAD_HANDLERS`
+  - `FILE_UPLOAD_MAX_MEMORY_SIZE` maximum size in bytes.
+  - `FILE_UPLOAD_DIRECTORY_PERMISSIONS` numeric mode to apply to directories created in the process of uploading files.
+  - `FILE_UPLOAD_PERMISSIONS` numeric mode. chmod. default `0o644`, `0o` prefix is very important
+  - `FILE_UPLOAD_TEMP_DIR` directory to store data to (typically files larger than FILE_UPLOAD_MAX_MEMORY_SIZE)
+- Email:
+  - `EMAIL_USE_LOCALTIME` Whether to send the SMTP Date header of email messages in the local time zone (True) or in UTC (False).
+  - `EMAIL_TIMEOUT` Specifies a timeout in seconds for blocking operations like the connection attempt.
+  - `EMAIL_FILE_PATH` The directory used by the file email backend to store output files.
+  - `DEFAULT_FROM_EMAIL`
+    - Default email address to use for various automated correspondence from the site manager(s). This doesn’t include error messages sent to ADMINS and MANAGERS; for that, see SERVER_EMAIL.
+  - `SERVER_EMAIL`
+    - The email address that error messages come from, such as those sent to ADMINS and MANAGERS.
+  - SMTP
+    - `EMAIL_HOST` host to use for sending email
+    - `EMAIL_PORT` use for the SMTP server defined in EMAIL_HOST
+    - If either of these settings is empty, Django won’t attempt authentication for SMTP server.
+      - `EMAIL_HOST_USER`
+      - `EMAIL_HOST_PASSWORD`
+- Database
+  - `DATABASES`
+    - A dictionary containing the settings for all databases
+    - Must configure a default database
+    - `ATOMIC_REQUESTS` to wrap each request into a transaction
+    - `AUTOCOMMIT` Django manages transactions or you
+    - `ENGINE`
+      - `'django.db.backends.postgresql'`
+      - `'django.db.backends.mysql'`
+      - `'django.db.backends.sqlite3'`
+      - `'django.db.backends.oracle'`
+    - `HOST`
+      - Empty string means localhost.
+      - `'/var/run/mysql'` connect with socket
+    - `NAME` is database name
+    - `CONN_MAX_AGE`
+      - lifetime of a database connection
+      - seconds
+    - `PASSWORD`
+    - `PORT` empty string means the default port
+    - `USER`
+- `DEFAULT_FILE_STORAGE`
+  - Default file storage class to be used for any file-related operations that don’t specify a particular storage system.
+- CORS
+  - `SECURE_CROSS_ORIGIN_OPENER_POLICY`
+    - Default: `'same-origin'`
+    -
+- Timezone:
+  - `USE_TZ`
+  - `TIME_ZONE`
+    - Default: `'America/Chicago'`
+    - When `USE_TZ` is `False`, this is the time zone in which Django will store all datetimes. When `USE_TZ` is True, this is the default time zone that Django will use to display datetimes in templates and to interpret datetimes entered in forms.
 
 # Routing
 
+- `urlpatterns` should be a sequence of `path()` and/or `re_path()` instances.
 - Point the root URLconf at the `polls.urls`, or whatever is the module's name.
   - `include('polls.url')`
     - Referencing other URLconfs.
@@ -164,13 +240,50 @@
           - To make global changes to the URL patterns of your project while only touching a single file.
           - I guess it means we can do change our endpoints needless to change our codes.
 - URL Dispatcher
+  - No framework limitations, Do what you want. 100% freedom.
+  - ## [Cool URIs don’t change, by World Wide Web creator Tim Berners-Lee](https://www.w3.org/Provider/Style/URI)
+  - Create a Python module informally called a `URLconf` (URL configuration). A mapping between URL path expressions to Python functions (your views).
+  - # How Django processes a request
+    - User requests a page
+    - Django determines root `URLconf` module to use. Usually `ROOT_URLCONF` setting
+    - Django loads Python module and looks for the variable `urlpatterns`.
+    - Django goes up to down in URL patterns, stops at the first one that matches the requested URL
+    - Django imports and calls the given view with these args:
+      - An instance of `HttpRequest`.
+      - URL path parameters (`/users/1`) and URL parameters (`/users?page=1`)
+    - **No** URL pattern matches, Django invokes an appropriate error-handling view
 - Different ways to route
   - `path('', TemplateView.as_view(template_name='views/main.html')),`
     - Here we use Django power. We are saying that you figure it out how your should return this html page
+  - **No** need to add a leading slash, because every URL has that. `/articles` and `article` is the same in this example:
+    ```py
+    from django.urls import path
+    from . import views
+    urlpatterns = [
+        path('articles/2003/', views.special_case_2003),
+        path('articles/<int:year>/', views.year_archive),
+        path('articles/<int:year>/<int:month>/', views.month_archive),
+        path('articles/<int:year>/<int:month>/<slug:slug>/', views.article_detail),
+    ]
+    ```
+  - Path converters:
+    - `str` default convertor
+    - `int` zero or any positive integer.
+    - `slug`
+      - ASCII letters
+      - numbers
+      - the hyphen and underscore characters.
+      - `building-your-1st-django-site`
+    - `uuid`
+      - There was a warning but I do not understand it. Please read Doc
+    - `path`
+      - I do not get this one at all. READ doc.
   - Here we used function based view
     - `path('funky', views.funky),`
       - Here we pass a function for this route
     - `path('rest/<int:guess>', views.rest),`
+      - To capture a value from the URL, use angle brackets.
+      - This captured value includes a converter type
       - Here we used a URL path parameter
       - It will convert it automatically to `int`
   - Here we use class base view:
@@ -316,6 +429,7 @@
       - `my-touch polls/templates/polls/user_guess.html`
         - **That `polls` duplication is required**.
   - We have many template engines
+    - ## [In the name of the father, the son, and the holy ghost, READ doc for Christ sake](https://docs.djangoproject.com/en/4.0/topics/templates/)
     - substitution: `{{ user_guess|safe }}`
       - We say that do not escape this string and let browser to interpreter it as a html/js/css
     - calling code: `{% author.get_books() %}`
@@ -336,6 +450,7 @@
       {% block content %}
       {% endblock %}
       ```
+    - `{# this won't be rendered #}`
   - Template inheritance:
     - navbar, etc.
     - DRY principle
@@ -347,9 +462,20 @@
 - Function-based views
   - Lower level
   - Here we have to check whether we got get request or post request
-- Class-based views:
-  - Django understand HTTP verbs.
+- [Class-based views](https://docs.djangoproject.com/en/4.0/ref/class-based-views):
+  - **_READ Doc for sure_**
   - Here we have many features
+  - Understand HTTP verbs.
+  - We have a deep inheritance in Views. Mixins and Generic class-based views will help us in those cases that the default one cannot fulfill our needs.
+  - `django.views.generic.base.View`
+    - The master class-based base view.
+    - All other class-based views inherit from this base class.
+    - It isn’t strictly a generic view and thus can also be imported from `django.views`.
+- Generic views:
+  - DRY
+  - In CRUD we do not wanna rewrite tons of code again and again
+  - Keep code consistent
+  - Less line of code means less :bug:
 
 # Models
 

@@ -1,3 +1,25 @@
-from django.shortcuts import render
+from django.views.generic import ListView
+# from datetime import datetime
+from django.utils import timezone
+from .models import Apple
+
 
 # Create your views here.
+class ListApple(ListView):
+    model = Apple
+    paginate_by = 100  # if pagination is desired
+
+    # This name is preserved
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        # context['now'] = datetime.now()
+        """
+        - datetime.now()
+        I guess we do not like this one too much
+        Returns local time: datetime.datetime(2022, 7, 3, 18, 40, 31, 441670)
+        - timezone.now()
+        Read USE_TZ and generate time based on this setting
+        """
+        return context
+
