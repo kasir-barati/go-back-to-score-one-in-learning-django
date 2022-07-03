@@ -65,7 +65,7 @@ TEMPLATES = [
             # knows what it should up to do.
             # os.path.join(os.path.dirname(__file__), '..', 'polls', 'templates'),
             # os.path.join(os.path.dirname(__file__), '..', 'gview', 'templates'),
-            os.path.join(os.path.dirname(__file__), 'templates'),
+            os.path.join(os.path.dirname(__file__), '..', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

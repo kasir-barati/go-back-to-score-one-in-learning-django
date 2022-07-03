@@ -719,4 +719,10 @@
     while sending request to the `http://127.0.0.1:8000/accounts/login/`
     - To vanish this error:
       - Create a registration directory on the search path and then add the `login.html` file.
-      - It is also possible that your project name is not appropriate for a pyhon project.
+      - It is also possible that your project name is not appropriate for a python project.
+        - After renaming to a valid director name do not forget to remove the old venv and create a new one. [ref](https://stackoverflow.com/a/72850572/8784518)
+      - The path to templates is not correct:
+        - `/home/kasir/go-back-to-score-one-in-learning-django/1_web_app_technologies_and_django/first_django_app/go_back_start_again/go_back_start_again/templates/registration/login.html`
+          - For when I was using `os.path.join(os.path.dirname(__file__), 'templates'),`
+        - `/home/kasir/go-back-to-score-one-in-learning-django/1_web_app_technologies_and_django/first_django_app/venv/lib/python3.10/site-packages/django/contrib/admin/templates/registration/login.html`
+          - For when I did not specify any path to templates
