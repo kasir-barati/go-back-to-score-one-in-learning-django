@@ -300,6 +300,42 @@
   def rest(req: HttpRequest, guest: int) -> HttpResponse:
       return HttpResponse(f"<h1>{escape(guess)}</h1>")
   ```
+- Templates:
+  - Mostly HTML
+  - Pass the request object, HTML file path, and lastly data
+    ```py
+    from django.views import View
+    from django.shortcuts import render
+    from django.http.request import HttpRequest
+    class GameView(View):
+        def get(self, req: HttpRequest, guess: int) -> HttpResponse:
+            data = { "user_guess": guess }
+            return render(req, 'polls/user_guess.html', data)
+    ```
+    - The important part is that you have to put your templates in another directory with the same name as our app. This is a must.
+      - `my-touch polls/templates/polls/user_guess.html`
+        - **That `polls` duplication is required**.
+  - We have many template engines
+    - substitution: `{{ user_guess|safe }}`
+      - We say that do not escape this string and let browser to interpreter it as a html/js/css
+    - calling code: `{% author.get_books() %}`
+    - conditions:
+      ```
+      {% if user_guess > 100 %}
+      {% endif %}
+      ```
+    - loops:
+      ```
+      {% for user in users %}
+      <h1>Name: {{ user.name }}</h1>
+      <h5>Name length: {{ user.name|length }}</h5>
+      {% endif %}
+      ```
+    - blocks:
+      ```
+      {% block content %}
+      {% endblock %}
+      ```
 - Function-based views
   - Lower level
   - Here we have to check whether we got get request or post request
