@@ -498,3 +498,24 @@
       - Returns a new `QuerySet` containing objects that do not match the given lookup parameters. and delete them
     - It does SQL constraint `ON DELETE CASCADE`
       - Customizable via the `on_delete` argument to the `ForeignKey`.
+
+# Objects in Python
+
+- Everything is object
+  - String is an object
+- Why OOP:
+  - Isolation
+  - DRY
+  - Extensibility
+- Class is an abstract concept
+- Instances are real objects
+- Class have:
+  - property
+  - methods
+- Object lifecycle:
+  - `constructor` or in python `__init__`
+    - Create instance of the class
+  - `destructor` or in python `__del__`
+    - When the instance going to be deleted
+- Inheritance:
+  - Here we have code reuse
