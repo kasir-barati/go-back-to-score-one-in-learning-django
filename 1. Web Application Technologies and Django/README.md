@@ -163,10 +163,149 @@
             - Redirect to another endpoint with their name
           - To make global changes to the URL patterns of your project while only touching a single file.
           - I guess it means we can do change our endpoints needless to change our codes.
+- URL Dispatcher
+- Different ways to route
+  - `path('', TemplateView.as_view(template_name='views/main.html')),`
+    - Here we use Django power. We are saying that you figure it out how your should return this html page
+  - Here we used function based view
+    - `path('funky', views.funky),`
+      - Here we pass a function for this route
+    - `path('rest/<int:guess>', views.rest),`
+      - Here we used a URL path parameter
+      - It will convert it automatically to `int`
+  - Here we use class base view:
+    - `path('main', views.MainView.as_view()),`
+    - `path('remain/<slug:guess>', views.RestMainView.as_view()),`
+      - `slug` is a kind of string but with specific meaning
+    - `as_view` converts our class to view
 
 # Views
 
--
+- As we said Django look into `urls.py` and select proper `views.py`
+- Here we do:
+  - Process incoming request
+  - Do database queries
+  - Generate response where it can be html, json, string, etc
+- How Django process HTTP incoming request:
+  - `http://doman.name/app_name/view_within_app_name`
+  - `http://doman.name/app_name/view_within_app_name/24` which 24 is URL path parameter
+  - `GET http://doman.name/app_name/view_within_app_name?guess=42`
+- We have access to Request object and Response Object in the views:
+  1. A page is requested
+  2. Django creates an `HttpRequest` object that contains request metadata.
+  3. Django loads the appropriate view, passing the `HttpRequest` as the first argument to the view function.
+  4. Each view is responsible for returning an `HttpResponse` object.
+- [Learn more about req and res objects](https://docs.djangoproject.com/en/4.0/ref/request-response)
+- `HttpRequest`
+  - Instantiates a `QueryDict` object based on query_string.
+    ```py
+    QueryDict('a=1&a=2&c=3')
+    # <QueryDict: {'a': ['1', '2'], 'c': ['3']}>
+    ```
+  - Attributes:
+    - `req.GET['guess']`
+      - **Do not do `req.GET.guess`. It is wrong, Python throw error**
+      - A dictionary-like object with all given HTTP GET parameters.
+      - Catches Query string named `guess`.
+      - You can use `escape` utility function to prevent XSS
+        ```py
+        from django.utils.html import escape
+        from django.http.request import HttpRequest
+        from django.http.response import HttpResponse
+        def no_xss(req: HttpRequest) -> HttpResponse:
+            return HttpResponse(f"<h1>{escape(req.GET['guess'])}</h1>")
+        ```
+    - `req.scheme`
+      - http or https (usually)
+    - `req.body`
+      - Raw HTTP request body as a bytestring.
+      - For processing conventional **form data**, use `req.POST`.
+    - `req.path`
+      - the full path to the requested page
+      - "/music/bands/the_beatles/"
+      - Alternative: `req.get_full_path()`
+    - `req.method`
+      - HTTP verb
+      - guaranteed to be uppercase
+    - `req.POST`
+      - A dictionary-like object with all given HTTP POST parameters, form data.
+      - Files are not in here. Check the `req.FILES`
+    - `req.FILES`
+      - A dictionary-like object with all uploaded files.
+      - Each key in `FILES` is the name from the `<input type="file" name="">`.
+      - It has file if:
+        - HTTP verb be `POST`
+        - And `enctype="multipart/form-data"`
+    - `req.META`:
+      - A dictionary containing all available HTTP headers.
+      - Here is a list of possible useful values:
+        - `CONTENT_TYPE`
+        - `HTTP_USER_AGENT`
+        - `REMOTE_ADDR`
+          - The IP address of the client.
+          - Alternative: `req.get_port()`
+  - `HttpResponse`:
+    - `HttpResponse` sub classes:
+      - `HttpResponseRedirect`:
+        - status code: 302 (found)
+        - Redirect user to another page
+          ```py
+          from django.utils.html import escape
+          from django.http.request import HttpRequest
+          from django.http.response import HttpResponseRedirect
+          # Please note that this ": int" do not convert the string into int
+          # It is done by django and because we did:
+          # path('rest/<int:guess>', views.rest)
+          def rest(req: HttpRequest, guest: int) -> HttpResponseRedirect:
+              return HttpResponseRedirect("https://www.linkedin.com/in/kasir-barati/")
+          ```
+      - `HttpResponsePermanentRedirect`
+        - status code: 301
+      - `HttpResponseNotModified`
+        - status code: 304
+      - `HttpResponseBadRequest`
+        - status code: 400
+      - `HttpResponseNotFound`
+        - status code: 404
+      - `HttpResponseForbidden`
+        - status code: 403
+      - `HttpResponseNotAllowed`
+        - HTTP verb is not valid
+        - status code: 405
+      - `HttpResponseGone`
+        - status code: 410
+      - `HttpResponseServerError`
+        - status code: 500
+    - `StreamingHttpResponse`:
+      - Django is designed for short-lived requests
+      - tie a worker process
+      - poor performance.
+      - Sub classes:
+        - `FileResponse`:
+          - optimized for binary files.
+          - streams the file out in small chunks.
+            ```py
+            from django.http import FileResponse
+            response = FileResponse(open('myfile.png', 'rb'))
+            ```
+            The file will be closed automatically, so don’t open it with a context manager.
+- Getting URL path parameters
+  ```py
+  from django.utils.html import escape
+  from django.http.request import HttpRequest
+  from django.http.response import HttpResponse
+  # Please note that this ": int" do not convert the string into int
+  # It is done by django and because we did:
+  # path('rest/<int:guess>', views.rest)
+  def rest(req: HttpRequest, guest: int) -> HttpResponse:
+      return HttpResponse(f"<h1>{escape(guess)}</h1>")
+  ```
+- Function-based views
+  - Lower level
+  - Here we have to check whether we got get request or post request
+- Class-based views:
+  - Django understand HTTP verbs.
+  - Here we have many features
 
 # Models
 
