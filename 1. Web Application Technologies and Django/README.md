@@ -342,6 +342,8 @@
     - How to use?
       - `{% block content %}{% endblock %}` in the `base.html`
       - `{% extends "polls/base.html" %}` in the `user_guess.html`
+  - Linking templates to each other:
+    - We use specified `name` in `urls.py` instead of hard coded strings
 - Function-based views
   - Lower level
   - Here we have to check whether we got get request or post request
