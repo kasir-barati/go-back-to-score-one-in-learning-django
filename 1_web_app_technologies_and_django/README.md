@@ -18,14 +18,16 @@
 
 - `pip install -r requirements.txt` to install dependencies
 - `django-admin` is a command-line utility for administrative tasks.
-- A bunch of command related to `manage.py`
+- A bunch of command related to `manage.py`Frw
   - Interact with this Django project
   - Automatically created.
   - `python manage.py <command> [options]`
     - Available commands:
       - **auth**
         - changepassword
-        - createsuperuser
+        - `createsuperuser`
+          - Create superusers
+          - `python manage.py createsuperuser --username=Kasir --email=kasir.barati@gmail.com`
       - **contenttypes**
         - remove_stale_contenttypes
       - **django**
@@ -669,3 +671,52 @@
       - `python manage.py makemigrations`
       - `python manage.py migrate`
       - Here is why: Probably you never did a `makemigrations` or you already have done it. But you did `migrate`. Or the last one is that you delete your database and now database is empty, so you need to do `migrate` again.
+
+# Authentication in Django
+
+- Django is battery included:
+  - Handles both authentication and authorization
+  - Built on top of sessions
+  - But you need 3rd party packages for:
+    - Password strength checking
+    - Throttling of login attempts
+    - OAuth
+    - Object-level permissions
+  - Bundled as a Django contrib module in `django.contrib.auth`
+- Auth system buts and bolts:
+  - Users
+    - `from django.contrib.auth.models import User`
+    - **Set up a custom user model when starting an actual project. Do not use this one**
+  - Groups
+    - `from django.contrib.auth.models import Group`
+  - Permissions
+  - A configurable password hashing system
+  - Forms and view tools for logging in users, or restricting content
+  - A pluggable backend system
+- The primary attributes of the default user are ([doc](https://docs.djangoproject.com/en/4.0/ref/contrib/auth/#django.contrib.auth.models.User)):
+  - `username`
+  - `password`
+  - `email`
+  - `first_name`
+  - `last_name`
+- Change password ways:
+  - CLI: `python manage.py changepassword *username*`
+  - Programmatically: `User.objects.get(username='john').set_password('new password')`
+  - Admin panel
+  - User panel
+- [Django Tutorial Part 8: User authentication and permissions](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication)
+  - Add `django.contrib.auth` and `'django.contrib.contenttypes'` to your installed apps.
+    - First one Contains the core of the authentication framework, and its default models.
+    - Last one is the Django content type system, which allows permissions to be associated with models you create.
+  - `SessionMiddleware` and `AuthenticationMiddleware` in `middleware` section
+  - `path('accounts/', include('django.contrib.auth.urls')),`
+  - Get the url with `reverse('login')` and `reverse('logout')`
+  - Create authentication pages to handle login, log out, and password management "out of the box".
+  - This includes a URL mapper, views and forms, **but it does not include the templates — we have to create our own!**
+    - I was stocked right here. I thought fo hours why it does not show me anything
+  - Shared login behavior and available across the whole site.
+  - If you've follow me along you should get this error **django.template.exceptions.TemplateDoesNotExist: registration/login.html**
+    while sending request to the `http://127.0.0.1:8000/accounts/login/`
+    - To vanish this error:
+      - Create a registration directory on the search path and then add the `login.html` file.
+      - It is also possible that your project name is not appropriate for a pyhon project.
