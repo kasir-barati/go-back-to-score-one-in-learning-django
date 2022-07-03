@@ -645,3 +645,18 @@
     - When the instance going to be deleted
 - Inheritance:
   - Here we have code reuse
+
+# Forms in Django
+
+- HTTP verbs:
+  - `POST` create or modify data
+  - `GET` reading data
+- CSRF protection:
+  - Generate a token
+  - Put it in the generated form in a hidden tag
+  - Check if it is provided and its value is correct
+  - Now rogue server cannot pretend that it is the legit server. Because it does not have access to our server.
+  - In Django we are protected by default but we need to implement it:
+    - `@csrd_exempt` says to the Django that I do not handle CSRF. Please do not bother me right now. I will implement it.
+    - ### Implement CSRF
+      - Just use `{% csrf_token %}` in your html file. It does its job. Just remember to enable the CSRF token if it is disabled.

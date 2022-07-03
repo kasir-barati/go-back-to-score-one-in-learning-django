@@ -10,6 +10,7 @@ def index(req: HttpRequest) -> HttpResponse:
     )
     
 class GameView(View):
+    # This "get" specify the HTTP verb
     def get(self, req: HttpRequest, guess: int) -> HttpResponse:
         data = { "user_guess": guess }
         return render(req, 'polls/user_guess.html', data)
