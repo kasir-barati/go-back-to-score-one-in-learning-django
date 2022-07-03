@@ -668,3 +668,4 @@
     - If this error raised: `no such table: django_session`
       - `python manage.py makemigrations`
       - `python manage.py migrate`
+      - Here is why: Probably you never did a `makemigrations` or you already have done it. But you did `migrate`. Or the last one is that you delete your database and now database is empty, so you need to do `migrate` again.
