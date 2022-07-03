@@ -42,6 +42,7 @@
         - `makemigrations`:
           - Creates new migrations based on the changes detected to your models.
           - Watch our current `models.py` and see if there is any change. If there was it will create a new migration
+          - **You can remove the generated migration files. Just remember that do not remove applied migration. Since Django keep track of applied migrations on the database as we have the same behavior in Prisma. But in dev env you can remove the migration file and database too.**
         - `migrate`:
           - To apply created migrations to database
         - sendtestemail
