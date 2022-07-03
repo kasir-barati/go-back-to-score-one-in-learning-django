@@ -336,6 +336,12 @@
       {% block content %}
       {% endblock %}
       ```
+  - Template inheritance:
+    - navbar, etc.
+    - DRY principle
+    - How to use?
+      - `{% block content %}{% endblock %}` in the `base.html`
+      - `{% extends "polls/base.html" %}` in the `user_guess.html`
 - Function-based views
   - Lower level
   - Here we have to check whether we got get request or post request
