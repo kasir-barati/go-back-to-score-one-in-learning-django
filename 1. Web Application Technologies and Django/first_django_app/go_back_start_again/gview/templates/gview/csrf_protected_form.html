@@ -7,4 +7,6 @@
   <input type="submit" value="I did my choice!" />
   {% csrf_token %}
 </form>
-<div>You entered {{guess}}</div>
+{% if guessed_number %}
+<div>You entered {{guessed_number}}</div>
+{% endif %}

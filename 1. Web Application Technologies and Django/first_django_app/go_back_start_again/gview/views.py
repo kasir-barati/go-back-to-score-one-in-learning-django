@@ -1,6 +1,7 @@
 from django.views.generic import ListView
 from django.views.generic import View
 from django.http import HttpRequest
+from django.shortcuts import redirect
 from django.shortcuts import render 
 # from datetime import datetime
 from django.utils import timezone
@@ -29,11 +30,27 @@ class ListApple(ListView):
 
 class CsrfProtectedForm(View):
     # This "get" specify the HTTP verb
+    # def get(self, req: HttpRequest):
+    #     return render(req, 'gview/csrf_protected_form.html')
+    
     def get(self, req: HttpRequest):
-        return render(req, 'gview/csrf_protected_form.html')
+        # <flash-message>
+        guessed_number = req.session.get('guessed_number', False)
+        if guessed_number != None:
+            del(req.session['guessed_number'])
+        context = {"guessed_number": guessed_number}
+        # </flash-message>
+
+        return render(req, 'gview/csrf_protected_form.html', context)
     
     # This "post" specify the HTTP verb
+    # def post(self, req: HttpRequest):
+    #     guess = req.POST.get('guess')
+    #     context = {"guess": guess}
+    #     return render(req, 'gview/csrf_protected_form.html', context)
+
     def post(self, req: HttpRequest):
         guess = req.POST.get('guess')
-        context = {"guess": guess}
-        return render(req, 'gview/csrf_protected_form.html', context)
+        req.session['guessed_number'] = guess
+        return redirect(req.path)
+

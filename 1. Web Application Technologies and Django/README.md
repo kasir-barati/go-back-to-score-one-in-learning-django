@@ -660,3 +660,11 @@
     - `@csrd_exempt` says to the Django that I do not handle CSRF. Please do not bother me right now. I will implement it.
     - ### Implement CSRF
       - Just use `{% csrf_token %}` in your html file. It does its job. Just remember to enable the CSRF token if it is disabled.
+- :warning:**Never sends an HtML page in response to a POST request**:warning:
+  - Why? Because if user press f5 - Reload the page - browser tries to resend the previous POST request. Assume you've done a money transfer to someone. It's gonna duplicate. Obviously browser ask permission from user. But users do not know anything about it. So most of time they just say yes do it.
+  - Solution:
+    - Redirect user
+    - [Note to enable your django app's sessions](https://docs.djangoproject.com/en/4.0/topics/http/sessions/#:~:text=Enabling%20sessions&text=To%20enable%20session%20functionality%2C%20do,sessions.)
+    - If this error raised: `no such table: django_session`
+      - `python manage.py makemigrations`
+      - `python manage.py migrate`
