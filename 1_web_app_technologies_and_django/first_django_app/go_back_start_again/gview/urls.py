@@ -2,6 +2,7 @@ from django.urls import path
 from django.views.generic.base import TemplateView
 from .views import ListApple
 from .views import CsrfProtectedForm
+from .views import ProtectedView
 
 
 app_name='gview'
@@ -15,5 +16,6 @@ urlpatterns = [
         name="gview-index"
     ),
     path('apples', ListApple.as_view(), name='apple-list'),
-    path('guess', CsrfProtectedForm.as_view(), name='guess-me-protected')
+    path('guess', CsrfProtectedForm.as_view(), name='guess-me-protected'),
+    path('protected-route', ProtectedView.as_view(), name='protected-route'),
 ]

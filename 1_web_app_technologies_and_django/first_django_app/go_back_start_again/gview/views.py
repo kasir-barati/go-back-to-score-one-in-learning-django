@@ -1,9 +1,11 @@
 from django.views.generic import ListView
 from django.views.generic import View
 from django.http import HttpRequest
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.shortcuts import render 
+from django.contrib.auth.mixins import LoginRequiredMixin
 # from datetime import datetime
 from django.utils import timezone
 from .models import Apple
@@ -68,4 +70,13 @@ class CsrfProtectedForm(View):
         guess = req.POST.get('guess')
         req.session['guessed_number'] = guess
         return redirect(req.path)
+
+
+class ProtectedView(LoginRequiredMixin, View):
+    login_url = 'login'
+    # No effect. IDK how I should configure it. I do not care too much about it right now
+    # redirect_field_name = 'redirect_to'
+    
+    def get(self, req: HttpRequest) -> HttpResponse:
+        return HttpResponse('I am protected')
 

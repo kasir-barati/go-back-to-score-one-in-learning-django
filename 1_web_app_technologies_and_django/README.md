@@ -753,4 +753,7 @@
       - The email your app will send to the user
     - `my-touch templates/registration/password_reset_confirm.html`
     - `my-touch templates/registration/password_reset_complete.html`
-    - ``
+- To restrict access to logged-in users in your class-based views derive from `LoginRequiredMixin`.
+  - Same as using `@login_required` decorator
+  - Specify alternative location to redirect user to it if not authenticated (`login_url`)
+  - A URL parameter name instead of "next" to insert the current absolute path (`redirect_field_name`).
