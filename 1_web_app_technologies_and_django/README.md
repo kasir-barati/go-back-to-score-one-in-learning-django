@@ -155,16 +155,28 @@
   - `FILE_UPLOAD_PERMISSIONS` numeric mode. chmod. default `0o644`, `0o` prefix is very important
   - `FILE_UPLOAD_TEMP_DIR` directory to store data to (typically files larger than FILE_UPLOAD_MAX_MEMORY_SIZE)
 - Email:
-  - `EMAIL_USE_LOCALTIME` Whether to send the SMTP Date header of email messages in the local time zone (True) or in UTC (False).
-  - `EMAIL_TIMEOUT` Specifies a timeout in seconds for blocking operations like the connection attempt.
-  - `EMAIL_FILE_PATH` The directory used by the file email backend to store output files.
+  - `EMAIL_BACKEND`:
+    - `'django.core.mail.backends.console.EmailBackend'`
+      - Instead of sending out real emails the console backend just writes the emails that would be sent to the standard output.
+      - Just in dev mode to test that email generates successfully
+      - **IDK why but in my test did not pan out**
+    - `'django.core.mail.backends.smtp.EmailBackend'`
+      - Specify that sends email via SMTP server
+  - `EMAIL_USE_LOCALTIME`
+    - Whether to send the SMTP Date header of email messages in the local time zone (True) or in UTC (False).
+  - `EMAIL_TIMEOUT`
+    - Specifies a timeout in seconds for blocking operations like the connection attempt.
+  - `EMAIL_FILE_PATH`
+    - The directory used by the file email backend to store output files.
   - `DEFAULT_FROM_EMAIL`
     - Default email address to use for various automated correspondence from the site manager(s). This doesn’t include error messages sent to ADMINS and MANAGERS; for that, see SERVER_EMAIL.
   - `SERVER_EMAIL`
     - The email address that error messages come from, such as those sent to ADMINS and MANAGERS.
   - SMTP
-    - `EMAIL_HOST` host to use for sending email
-    - `EMAIL_PORT` use for the SMTP server defined in EMAIL_HOST
+    - `EMAIL_HOST`
+      - host to use for sending email
+    - `EMAIL_PORT`
+      - use for the SMTP server defined in EMAIL_HOST
     - If either of these settings is empty, Django won’t attempt authentication for SMTP server.
       - `EMAIL_HOST_USER`
       - `EMAIL_HOST_PASSWORD`
@@ -726,3 +738,19 @@
           - For when I was using `os.path.join(os.path.dirname(__file__), 'templates'),`
         - `/home/kasir/go-back-to-score-one-in-learning-django/1_web_app_technologies_and_django/first_django_app/venv/lib/python3.10/site-packages/django/contrib/admin/templates/registration/login.html`
           - For when I did not specify any path to templates
+      - At last you should create the `base_generic.html` in your share templates directory
+  - Now if you try to login you face with yet another error, `Page not found (404)` because obviously as we were responsible to define our login page, we are incharge to create profile page too
+    - By default, Django expects that upon logging in you will want to be taken to a profile page.
+    - However we can change this behavior via `LOGIN_REDIRECT_URL = '/'` configuration.
+    - But we have to at then end of the day create this page too
+  - Now its time to create logout page: `my-touch templates/registration/logged_out.html`
+  - Password reset form
+    - email user a reset link
+    - create forms to get the user's email address
+    - `my-touch templates/registration/password_reset_form.html`
+    - `my-touch templates/registration/password_reset_done.html`
+    - `my-touch templates/registration/password_reset_email.html`
+      - The email your app will send to the user
+    - `my-touch templates/registration/password_reset_confirm.html`
+    - `my-touch templates/registration/password_reset_complete.html`
+    - ``
